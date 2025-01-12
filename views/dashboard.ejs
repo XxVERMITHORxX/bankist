@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1rem;
+      animation: fadeIn 1.5s ease-in-out;
+      flex-direction: column;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: rgba(20, 20, 50, 0.9);
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 5%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background: #00adb5;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    /* Dashboard Container Styles */
+    .dashboard-container {
+      background: rgba(40, 40, 70, 0.95);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+      margin-top: 100px;
+      animation: slideIn 1s ease-out;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #f7f7f7;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #00adb5;
+      text-transform: uppercase;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .balance, .transactions, .transfer-form {
+      flex: 1;
+      min-width: 250px;
+      background: rgba(30, 30, 50, 0.9);
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem;
+      margin: 0.8rem 0;
+      background: #25274d;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    input:focus {
+      background: #1f2a3d;
+      border-bottom: 3px solid #00adb5;
+      transform: scale(1.02);
+    }
+
+    button {
+      padding: 1rem 2rem;
+      background: #00adb5;
+      border: none;
+      border-radius: 30px;
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out, background 0.3s ease;
+    }
+
+    button:hover {
+      background: #02848a;
+      transform: scale(1.05);
+    }
+
+    table {
+      width: 100%;
+      margin-top: 1.5rem;
+      border-collapse: collapse;
+      color: #fff;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    th {
+      background: #25274d;
+      color: #00adb5;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background: #1f2a3d;
+    }
+
+    tr:hover {
+      background: #313960;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-top: 1rem;
+      color: #f7f7f7;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="./">Home</a>
+    <a href="#">About</a>
+    <!-- Language Switch Button -->
+    <button id="langSwitch" style="background: #00adb5; color: #16213e;">ENG/IR</button>
+  </div>
+
+  <div class="dashboard-container">
+    <h2 id="welcomeMsg">Welcome, <%= user.first_name %> <%= user.last_name %>!</h2>
+
+    <div class="row">
+      <!-- Display the balance -->
+      <div class="balance">
+        <h3 id="balanceTitle">Your Balance</h3>
+        <p style="margin-top: 50px; font-size: xx-large;">$<%= balance ? balance.toFixed(2) : '0.00' %></p>
+      </div>
+
+      <!-- Transfer form -->
+      <div class="transfer-form">
+        <h3 id="transferTitle">Transfer Money</h3>
+        <form action="/transfer" method="POST">
+          <input type="hidden" name="senderId" value="<%= user.id %>">
+
+          <label for="recipientUsername" id="recipientLabel">Recipient Username:</label>
+          <input type="text" name="recipientUsername" required>
+
+          <label for="amount" id="amountLabel">Amount:</label>
+          <input type="number" name="amount" step="any" min="0.01" required>
+
+          <button type="submit">Transfer</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="transactions" style="margin-top: 50px;">
+      <h3 id="transactionsTitle">Your Transactions:</h3>
+      <button id="filterWithdrawals">Sort by Withdrawals</button>
+      <% if (transactions.length > 0) { %>
+        <table id="transactionsTable">
+          <thead>
+            <tr>
+              <th id="typeColumn">Type</th>
+              <th id="amountColumn">Amount</th>
+              <th id="dateColumn">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% transactions.forEach(transaction => { %>
+              <tr>
+                <td><%= transaction.type %></td>
+                <td>$<%= transaction.amount.toFixed(2) %></td>
+                <td><%= new Date(transaction.date).toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p id="noTransactionsMsg">No transactions available.</p>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    let originalOrder = [];
+    let isFiltered = false;
+
+    document.getElementById('filterWithdrawals').addEventListener('click', () => {
+      const table = document.getElementById('transactionsTable');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      if (!originalOrder.length) {
+        originalOrder = rows.map(row => row.outerHTML);
+      }
+
+      if (isFiltered) {
+        tbody.innerHTML = originalOrder.join('');
+      } else {
+        const withdrawals = rows.filter(row => {
+          const typeCell = row.querySelector('td:first-child');
+          return typeCell.textContent.trim().toLowerCase() === 'withdrawal';
+        });
+
+        const deposits = rows.filter(row => {
+          const typeCell = row.querySelector('td:first-child');
+          return typeCell.textContent.trim().toLowerCase() === 'deposit';
+        });
+
+        const sortedRows = [...withdrawals, ...deposits];
+        tbody.innerHTML = sortedRows.map(row => row.outerHTML).join('');
+      }
+
+      isFiltered = !isFiltered;
+    });
+
+    // Language Switch functionality
+    const texts = {
+      en: {
+        welcomeMsg: "Welcome, <%= user.first_name %> <%= user.last_name %>!",
+        balanceTitle: "Your Balance",
+        transferTitle: "Transfer Money",
+        recipientLabel: "Recipient Username:",
+        amountLabel: "Amount:",
+        transactionsTitle: "Your Transactions:",
+        filterWithdrawals: "Sort by Withdrawals",
+        typeColumn: "Type",
+        amountColumn: "Amount",
+        dateColumn: "Date",
+        noTransactionsMsg: "No transactions available."
+      },
+      fa: {
+        welcomeMsg: "خوش آمدید, <%= user.first_name %> <%= user.last_name %>!",
+        balanceTitle: "موجودی شما",
+        transferTitle: "انتقال پول",
+        recipientLabel: "نام کاربری گیرنده:",
+        amountLabel: "مقدار:",
+        transactionsTitle: "تراکنش های شما:",
+        filterWithdrawals: "مرتب سازی بر اساس برداشت‌ها",
+        typeColumn: "نوع",
+        amountColumn: "مقدار",
+        dateColumn: "تاریخ",
+        noTransactionsMsg: "هیچ تراکنشی موجود نیست."
+      }
+    };
+
+    document.getElementById('langSwitch').addEventListener('click', () => {
+      const currentLang = document.documentElement.lang === 'en' ? 'fa' : 'en';
+      document.documentElement.lang = currentLang;
+
+      // Update text content for each element
+      Object.keys(texts[currentLang]).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.innerText = texts[currentLang][id];
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

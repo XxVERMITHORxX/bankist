@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Transfer</title>
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #6e7e9e, #3b4e75);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      font-size: 1rem;
+      flex-direction: column;
+      padding: 2rem;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: space-around;
+      padding: 1rem 2rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.1rem;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background: #ff6f61;
+      transform: scale(1.1);
+    }
+
+    /* Form Container Styles */
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      width: 400px;
+      margin-top: 120px;
+      /* Added margin to ensure space for navbar */
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #2e3d55;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #e44c3b;
+      transform: scale(1.05);
+    }
+
+    #message {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Responsiveness */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        padding: 1rem;
+      }
+
+      .navbar a {
+        margin-bottom: 10px;
+      }
+
+      .container {
+        padding: 1rem;
+        margin-top: 150px;
+        /* Increased top margin for mobile screens */
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      .navbar a {
+        font-size: 1rem;
+        padding: 8px 15px;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 0.8rem;
+      }
+
+      button {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="./">Home</a>
+  </div>
+
+  <div class="container">
+    <h1>Admin Transfer</h1>
+    <form action="/admin-transfer" method="POST">
+      <div class="form-group">
+        <label for="adminUsername">Admin Username:</label>
+        <input type="text" id="adminUsername" name="adminUsername" value="admin" required readonly>
+      </div>
+
+      <div class="form-group">
+        <label for="recipientUsername">Recipient Username:</label>
+        <input type="text" id="recipientUsername" name="recipientUsername" placeholder="Enter recipient username"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="amount">Amount to Transfer:</label>
+        <input type="number" id="amount" name="amount" placeholder="Enter amount" required min="0.01" step="any">
+      </div>
+
+      <button type="submit">Transfer</button>
+    </form>
+
+    <div id="message" style="margin-top: 20px;"></div>
+  </div>
+</body>
+
+</html>
