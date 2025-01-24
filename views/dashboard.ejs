@@ -89,7 +89,9 @@
       flex-wrap: wrap;
     }
 
-    .balance, .transactions, .transfer-form {
+    .balance,
+    .transactions,
+    .transfer-form {
       flex: 1;
       min-width: 250px;
       background: rgba(30, 30, 50, 0.9);
@@ -140,7 +142,8 @@
       color: #fff;
     }
 
-    th, td {
+    th,
+    td {
       padding: 1rem;
       text-align: center;
     }
@@ -200,13 +203,15 @@
   </div>
 
   <div class="dashboard-container">
-    <h2 id="welcomeMsg">Welcome, <%= user.first_name %> <%= user.last_name %>!</h2>
+    <h2 id="welcomeMsg">Welcome, <%= user.first_name %>
+        <%= user.last_name %>!</h2>
 
     <div class="row">
       <!-- Display the balance -->
       <div class="balance">
         <h3 id="balanceTitle">Your Balance</h3>
-        <p style="margin-top: 50px; font-size: xx-large;">$<%= balance ? balance.toFixed(2) : '0.00' %></p>
+        <p style="margin-top: 50px; font-size: xx-large;">$<%= balance ? balance.toFixed(2) : '0.00' %>
+        </p>
       </div>
 
       <!-- Transfer form -->
@@ -230,7 +235,7 @@
     <div class="transactions" style="margin-top: 50px;">
       <h3 id="transactionsTitle">Your Transactions:</h3>
       <button id="filterWithdrawals">Sort by Withdrawals</button>
-      <% if (transactions.length > 0) { %>
+      <% if (transactions.length> 0) { %>
         <table id="transactionsTable">
           <thead>
             <tr>
@@ -240,22 +245,34 @@
             </tr>
           </thead>
           <tbody>
-            <% transactions.forEach(transaction => { %>
+            <% transactions.forEach(transaction=> { %>
               <tr>
-                <td><%= transaction.type %></td>
-                <td>$<%= transaction.amount.toFixed(2) %></td>
-                <td><%= new Date(transaction.date).toLocaleString() %></td>
+                <td>
+                  <%= transaction.type %>
+                </td>
+                <td>$<%= transaction.amount.toFixed(2) %>
+                </td>
+                <td>
+                  <%= new Date(transaction.date).toLocaleString() %>
+                </td>
               </tr>
-            <% }) %>
+              <% }) %>
           </tbody>
         </table>
-      <% } else { %>
-        <p id="noTransactionsMsg">No transactions available.</p>
-      <% } %>
+        <% } else { %>
+          <p id="noTransactionsMsg">No transactions available.</p>
+          <% } %>
     </div>
   </div>
 
   <script>
+    window.onload = function() {
+      const transferMessage = "<%= typeof transferMessage !== 'undefined' ? transferMessage : '' %>";
+      if (transferMessage) {
+        alert(transferMessage);
+      }
+    };
+
     let originalOrder = [];
     let isFiltered = false;
 

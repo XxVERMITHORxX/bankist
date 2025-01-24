@@ -22,7 +22,7 @@ app.get('/signup', (req, res) => {
 
 // Serve the dashboard page
 app.get('/dashboard', (req, res) => {
-  const { userId, username } = req.query; // Get userId or username from query parameters
+  const { userId, username, transferMessage } = req.query; // Get userId or username from query parameters
 
   if (!userId && !username) {
     return res.status(400).send('Invalid request. Please provide a userId or username.');
@@ -73,7 +73,7 @@ app.get('/dashboard', (req, res) => {
           }
 
           // Render the dashboard with user, transactions, and calculated balance
-          res.render('dashboard', { user, transactions, balance });
+          res.render('dashboard', { user, transactions, balance, transferMessage });
         }
       );
     });
@@ -85,37 +85,37 @@ app.post('/transfer', (req, res) => {
   const { senderId, recipientUsername, amount } = req.body; // Get the data from the transfer form
 
   if (!senderId || !recipientUsername || !amount) {
-    return res.status(400).send('Invalid transfer request. All fields are required.');
+    return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Invalid transfer request. All fields are required.`);
   }
 
   // Ensure amount is a positive number
   const transferAmount = parseFloat(amount);
   if (isNaN(transferAmount) || transferAmount <= 0) {
-    return res.status(400).send('Invalid amount. Please enter a positive number.');
+    return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Invalid amount. Please enter a positive number.`);
   }
 
   // Step 1: Get the sender's details
   db.get('SELECT id, balance FROM users WHERE id = ?', [senderId], (err, sender) => {
     if (err) {
-      return res.status(500).send('Error fetching sender details');
+      return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error fetching sender details.`);
     }
 
     if (!sender) {
-      return res.status(404).send('Sender not found');
+      return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Sender not found.`);
     }
 
     if (sender.balance < transferAmount) {
-      return res.status(400).send('Insufficient balance for transfer');
+      return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Insufficient balance for transfer.`);
     }
 
     // Step 2: Get the recipient's details
     db.get('SELECT id, username, balance FROM users WHERE username = ?', [recipientUsername], (err, recipient) => {
       if (err) {
-        return res.status(500).send('Error fetching recipient details');
+        return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error fetching recipient details.`);
       }
 
       if (!recipient) {
-        return res.status(404).send('Recipient not found');
+        return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Recipient not found.`);
       }
 
       // Step 3: Perform the transfer
@@ -128,7 +128,7 @@ app.post('/transfer', (req, res) => {
         [newSenderBalance, sender.id],
         (err) => {
           if (err) {
-            return res.status(500).send('Error updating sender balance');
+            return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error updating sender balance.`);
           }
 
           db.run(
@@ -136,7 +136,7 @@ app.post('/transfer', (req, res) => {
             [newRecipientBalance, recipient.id],
             (err) => {
               if (err) {
-                return res.status(500).send('Error updating recipient balance');
+                return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error updating recipient balance.`);
               }
 
               // Step 4: Create transactions for both sender and recipient
@@ -148,7 +148,7 @@ app.post('/transfer', (req, res) => {
                 [sender.id, transferAmount, transactionDate],
                 (err) => {
                   if (err) {
-                    return res.status(500).send('Error creating sender transaction');
+                    return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error creating sender transaction.`);
                   }
 
                   // Recipient's transaction (deposit)
@@ -157,11 +157,11 @@ app.post('/transfer', (req, res) => {
                     [recipient.id, transferAmount, transactionDate],
                     (err) => {
                       if (err) {
-                        return res.status(500).send('Error creating recipient transaction');
+                        return res.redirect(`/dashboard?userId=${senderId}&transferMessage=Error creating recipient transaction.`);
                       }
 
                       // Step 5: Redirect or respond with success
-                      res.send('Transfer successful');
+                      res.redirect(`/dashboard?userId=${senderId}&transferMessage=Transfer successful.`);
                     }
                   );
                 }
@@ -175,7 +175,12 @@ app.post('/transfer', (req, res) => {
 });
 
 app.get('/admin-transfer', (req, res) => {
-  res.render('admin-transfer'); // Make sure this file is in your views folder
+  db.all('SELECT first_name, last_name, username FROM users', (err, users) => {
+    if (err) {
+      return res.status(500).send('Error fetching users');
+    }
+    res.render('admin-transfer', { users });
+  });
 });
 
 // Admin transfers money
@@ -242,7 +247,7 @@ app.post('/signup', (req, res) => {
     [first_name, last_name, username, hashedPassword], function (err) {
       if (err) {
         console.error(err);
-        return res.redirect('/signup');
+        return res.render('signup', { errorMessage: 'Username already taken. Please choose another one.' });
       }
       res.redirect('/');
     });
@@ -255,14 +260,14 @@ app.post('/login', (req, res) => {
   db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
     if (err || !user) {
       console.error(err);
-      return res.redirect('/');
+      return res.render('login', { errorMessage: 'Username or password is incorrect. Please try again.' });
     }
 
     const passwordMatch = bcrypt.compareSync(password, user.password);
     if (passwordMatch) {
       res.redirect(`/dashboard?username=${username}`);
     } else {
-      res.redirect('/');
+      res.render('login', { errorMessage: 'Username or password is incorrect. Please try again.' });
     }
   });
 });

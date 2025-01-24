@@ -178,6 +178,7 @@
       button {
         font-size: 1rem;
       }
+      
     }
   </style>
 </head>
@@ -209,8 +210,18 @@
 
       <button type="submit">Transfer</button>
     </form>
-
     <div id="message" style="margin-top: 20px;"></div>
+
+    <h2>All Users</h2>
+    <ul>
+      <% if (typeof users !== 'undefined' && users.length > 0) { %>
+        <% users.forEach(user => { %>
+          <li><%= user.first_name %> <%= user.last_name %> (<%= user.username %>)</li>
+        <% }) %>
+      <% } else { %>
+        <li>No users found.</li>
+      <% } %>
+    </ul>
   </div>
 </body>
 

@@ -49,7 +49,8 @@
       width: 100%;
       padding: 1rem;
       margin: 0.8rem 0;
-      background: #3a415d; /* Lighter background */
+      background: #3a415d;
+      /* Lighter background */
       border: none;
       border-radius: 8px;
       color: #fff;
@@ -59,7 +60,8 @@
     }
 
     input:focus {
-      background: #2e3547; /* Slightly darker on focus */
+      background: #2e3547;
+      /* Slightly darker on focus */
       border-bottom: 3px solid #00adb5;
       transform: scale(1.02);
     }
@@ -131,7 +133,16 @@
       <button type="submit">Login</button>
     </form>
     <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+    <p><a href="/forgot-password">Forgot Password?</a></p>
   </div>
+  <script>
+    window.onload = function() {
+      const errorMessage = "<%= typeof errorMessage !== 'undefined' ? errorMessage : '' %>";
+      if (errorMessage) {
+        alert(errorMessage);
+      }
+    };
+  </script>
 </body>
 
 </html>

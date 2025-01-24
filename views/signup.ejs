@@ -129,5 +129,13 @@ a:hover {
     </form>
     <p>Already have an account? <a href="/">Login</a></p>
   </div>
+  <script>
+    window.onload = function() {
+      const errorMessage = "<%= typeof errorMessage !== 'undefined' ? errorMessage : '' %>";
+      if (errorMessage) {
+        alert(errorMessage);
+      }
+    };
+  </script>
 </body>
 </html>
