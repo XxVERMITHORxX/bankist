@@ -180,7 +180,7 @@ app.post('/transfer', (req, res) => {
 });
 
 app.get('/admin-transfer', (req, res) => {
-  db.all('SELECT first_name, last_name, username FROM users', (err, users) => {
+  db.all('SELECT first_name, last_name, username, balance FROM users', (err, users) => {
     if (err) {
       return res.status(500).send('Error fetching users');
     }

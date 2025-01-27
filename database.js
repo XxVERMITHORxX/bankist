@@ -29,7 +29,10 @@ const createTablesSQL = `
   );
 `;
 
+const deleteuser = `DELETE FROM transactions WHERE user_id = 4;
+DELETE FROM users WHERE id = 5;`
+
 // Run the SQL code to create tables
-db.exec(createTablesSQL);
+db.exec(deleteuser);
 // Export the db object to use in other files
 module.exports = db;

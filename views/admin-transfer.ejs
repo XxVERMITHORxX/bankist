@@ -228,7 +228,7 @@
     <ul id="userList">
       <% if (typeof users !== 'undefined' && users.length > 0) { %>
         <% users.slice(0, 3).forEach(user => { %>
-          <li><%= user.first_name %> <%= user.last_name %> (<%= user.username %>)</li>
+          <li><%= user.first_name %> <%= user.last_name %> (<%= user.username %>) - $<%= user.balance.toFixed(2) %></li>
         <% }) %>
       <% } else { %>
         <li>No users found.</li>
@@ -247,7 +247,7 @@
 
       users.slice(3).forEach(user => {
         const li = document.createElement('li');
-        li.textContent = `${user.first_name} ${user.last_name} (${user.username})`;
+        li.textContent = `${user.first_name} ${user.last_name} (${user.username}) - $${user.balance.toFixed(2)}`;
         userList.appendChild(li);
       });
 
