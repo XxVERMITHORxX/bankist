@@ -197,7 +197,7 @@
   <!-- Navbar -->
   <div class="navbar">
     <a href="./">Home</a>
-    <a href="#">About</a>
+    <a href="/about">About</a>
     <!-- Language Switch Button -->
     <button id="langSwitch" style="background: #00adb5; color: #16213e;">ENG/IR</button>
   </div>
@@ -266,7 +266,7 @@
   </div>
 
   <script>
-    window.onload = function() {
+    window.onload = function () {
       const transferMessage = "<%= typeof transferMessage !== 'undefined' ? transferMessage : '' %>";
       if (transferMessage) {
         alert(transferMessage);

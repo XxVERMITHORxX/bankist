@@ -80,6 +80,11 @@ app.get('/dashboard', (req, res) => {
   });
 });
 
+// Serve the about page
+app.get('/about', (req, res) => {
+  res.render('about');
+});
+
 // Handle the transfer between accounts
 app.post('/transfer', (req, res) => {
   const { senderId, recipientUsername, amount } = req.body; // Get the data from the transfer form
@@ -144,7 +149,7 @@ app.post('/transfer', (req, res) => {
 
               // Sender's transaction (withdrawal)
               db.run(
-                'INSERT INTO transactions (user_id, type, amount, date) VALUES (?, "withdrawal", ?, ?)',
+                'INSERT INTO transactions (user_id, type, amount, date) VALUES (?, "withdrawal", ?, ?)', 
                 [sender.id, transferAmount, transactionDate],
                 (err) => {
                   if (err) {
@@ -153,7 +158,7 @@ app.post('/transfer', (req, res) => {
 
                   // Recipient's transaction (deposit)
                   db.run(
-                    'INSERT INTO transactions (user_id, type, amount, date) VALUES (?, "deposit", ?, ?)',
+                    'INSERT INTO transactions (user_id, type, amount, date) VALUES (?, "deposit", ?, ?)', 
                     [recipient.id, transferAmount, transactionDate],
                     (err) => {
                       if (err) {

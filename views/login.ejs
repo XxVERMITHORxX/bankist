@@ -23,6 +23,36 @@
       color: #fff;
       font-size: 16px;
       animation: fadeIn 1.5s ease-in-out;
+      flex-direction: column;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      width: 100%;
+      background: rgba(20, 20, 50, 0.9);
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 5%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .navbar a:hover {
+      background: #00adb5;
+      color: #fff;
+      transform: scale(1.05);
     }
 
     /* Form Container Styles */
@@ -125,16 +155,34 @@
 </head>
 
 <body>
-  <div class="form-container">
-    <h2>Login</h2>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="./">Home</a>
+    <a href="#" id="adminLink">Admin</a>
+    <button id="langSwitch" style="background: #00adb5; color: #16213e;">ENG/IR</button>
+  </div>
+
+  <div class="form-container" id="loginForm" style="margin-top: 8rem;">
+    <h2 id="loginTitle">Login</h2>
     <form action="/login" method="POST">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input id="username" type="text" name="username" placeholder="Username" required>
+      <input id="password" type="password" name="password" placeholder="Password" required>
       <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+    <p id="signupPrompt">Don't have an account? <a href="/signup">Sign Up</a></p>
     <p><a href="/forgot-password">Forgot Password?</a></p>
   </div>
+
+  <!-- Admin Login Form -->
+  <div class="form-container" id="adminForm" style="display: none; margin-top: 8rem;">
+    <h2>Admin Login</h2>
+    <form id="adminLoginForm">
+      <input type="text" id="adminUsername" placeholder="Username" required>
+      <input type="password" id="adminPassword" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
   <script>
     window.onload = function() {
       const errorMessage = "<%= typeof errorMessage !== 'undefined' ? errorMessage : '' %>";
@@ -142,6 +190,64 @@
         alert(errorMessage);
       }
     };
+
+    // Language Switch functionality
+    const texts = {
+      en: {
+        loginTitle: "Login",
+        signupPrompt: "Don't have an account? <a href='/signup'>Sign Up</a>",
+        username: "Username",
+        password: "Password"
+      },
+      fa: {
+        loginTitle: "ورود",
+        signupPrompt: "حساب کاربری ندارید؟ <a href='/signup'>ثبت نام</a>",
+        username: "نام کاربری",
+        password: "رمز عبور"
+      }
+    };
+
+    document.getElementById('langSwitch').addEventListener('click', () => {
+      const currentLang = document.documentElement.lang === 'en' ? 'fa' : 'en';
+      document.documentElement.lang = currentLang;
+
+      // Update text content for each element
+      Object.keys(texts[currentLang]).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          if (element.tagName === 'INPUT') {
+            element.placeholder = texts[currentLang][id];
+          } else {
+            element.innerHTML = texts[currentLang][id];
+          }
+        }
+      });
+    });
+
+    // Admin Login functionality
+    document.getElementById('adminLink').addEventListener('click', () => {
+      const loginForm = document.getElementById('loginForm');
+      const adminForm = document.getElementById('adminForm');
+      if (loginForm.style.display === 'none') {
+        loginForm.style.display = 'block';
+        adminForm.style.display = 'none';
+      } else {
+        loginForm.style.display = 'none';
+        adminForm.style.display = 'block';
+      }
+    });
+
+    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+
+      if (username === 'root' && password === 'root') {
+        window.location.href = '/admin-transfer';
+      } else {
+        alert('Username or password is not correct');
+      }
+    });
   </script>
 </body>
 

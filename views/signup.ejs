@@ -22,6 +22,36 @@ body {
   color: #fff;
   font-size: 16px;
   animation: fadeIn 1.5s ease-in-out;
+  flex-direction: column;
+}
+
+/* Navbar Styles */
+.navbar {
+  width: 100%;
+  background: rgba(20, 20, 50, 0.9);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 5%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+}
+
+.navbar a:hover {
+  background: #00adb5;
+  color: #fff;
+  transform: scale(1.05);
 }
 
 .form-container {
@@ -118,16 +148,22 @@ a:hover {
    </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Sign Up</h2>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="./">Home</a>
+    <button id="langSwitch" style="background: #00adb5; color: #16213e;">ENG/IR</button>
+  </div>
+
+  <div class="form-container" style="margin-top: 8rem;">
+    <h2 id="signupTitle">Sign Up</h2>
     <form action="/signup" method="POST">
-      <input type="text" name="first_name" placeholder="First Name" required>
-      <input type="text" name="last_name" placeholder="Last Name" required>
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input id="first_name" type="text" name="first_name" placeholder="First Name" required>
+      <input id="last_name" type="text" name="last_name" placeholder="Last Name" required>
+      <input id="username" type="text" name="username" placeholder="Username" required>
+      <input id="password" type="password" name="password" placeholder="Password" required>
       <button type="submit">Sign Up</button>
     </form>
-    <p>Already have an account? <a href="/">Login</a></p>
+    <p id="loginPrompt">Already have an account? <a href="/">Login</a></p>
   </div>
   <script>
     window.onload = function() {
@@ -136,6 +172,43 @@ a:hover {
         alert(errorMessage);
       }
     };
+
+    // Language Switch functionality
+    const texts = {
+      en: {
+        signupTitle: "Sign Up",
+        loginPrompt: "Already have an account? <a href='/'>Login</a>",
+        first_name: "First Name",
+        last_name: "Last Name",
+        username: "Username",
+        password: "Password"
+      },
+      fa: {
+        signupTitle: "ثبت نام",
+        loginPrompt: "حساب کاربری دارید؟ <a href='/'>ورود</a>",
+        first_name: "نام",
+        last_name: "نام خانوادگی",
+        username: "نام کاربری",
+        password: "رمز عبور"
+      }
+    };
+
+    document.getElementById('langSwitch').addEventListener('click', () => {
+      const currentLang = document.documentElement.lang === 'en' ? 'fa' : 'en';
+      document.documentElement.lang = currentLang;
+
+      // Update text content for each element
+      Object.keys(texts[currentLang]).forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          if (element.tagName === 'INPUT') {
+            element.placeholder = texts[currentLang][id];
+          } else {
+            element.innerHTML = texts[currentLang][id];
+          }
+        }
+      });
+    });
   </script>
 </body>
 </html>

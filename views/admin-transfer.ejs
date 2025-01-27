@@ -15,62 +15,65 @@
     }
 
     body {
-      background: linear-gradient(135deg, #6e7e9e, #3b4e75);
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       color: #fff;
-      font-size: 1rem;
+      font-size: 16px;
+      animation: fadeIn 1.5s ease-in-out;
       flex-direction: column;
-      padding: 2rem;
     }
 
     /* Navbar Styles */
     .navbar {
       width: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(20, 20, 50, 0.9);
       display: flex;
-      justify-content: space-around;
-      padding: 1rem 2rem;
-      position: fixed;
+      justify-content: space-between;
+      padding: 1rem 5%;
+      position: absolute;
       top: 0;
       left: 0;
       z-index: 1000;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
     .navbar a {
       text-decoration: none;
       color: #fff;
-      font-size: 1.1rem;
-      padding: 10px 20px;
-      border-radius: 5px;
-      transition: background 0.3s ease, transform 0.3s ease;
+      font-size: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      border-radius: 30px;
+      transition: all 0.3s ease;
     }
 
     .navbar a:hover {
-      background: #ff6f61;
-      transform: scale(1.1);
+      background: #00adb5;
+      color: #fff;
+      transform: scale(1.05);
     }
 
     /* Form Container Styles */
     .container {
-      background-color: rgba(0, 0, 0, 0.7);
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      width: 400px;
-      margin-top: 120px;
-      /* Added margin to ensure space for navbar */
+      background: rgba(40, 40, 70, 0.95);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: slideIn 1s ease-out;
+      margin-top: 8rem;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 2rem;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      color: #f7f7f7;
     }
 
     .form-group {
@@ -86,27 +89,36 @@
     input[type="text"],
     input[type="number"] {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: #2e3d55;
+      padding: 1rem;
+      margin: 0.8rem 0;
+      background: #3a415d;
+      border: none;
+      border-radius: 8px;
       color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    input:focus {
+      background: #2e3547;
+      border-bottom: 3px solid #00adb5;
+      transform: scale(1.02);
     }
 
     button {
-      width: 100%;
-      padding: 10px;
-      background-color: #ff6f61;
-      color: white;
+      padding: 1rem 2rem;
+      background: #00adb5;
       border: none;
-      border-radius: 4px;
+      border-radius: 30px;
+      color: white;
+      font-size: 1.1rem;
       cursor: pointer;
-      transition: transform 0.2s ease-in-out;
+      transition: transform 0.2s ease-in-out, background 0.3s ease;
     }
 
     button:hover {
-      background-color: #e44c3b;
+      background: #02848a;
       transform: scale(1.05);
     }
 
@@ -189,9 +201,9 @@
     <a href="./">Home</a>
   </div>
 
-  <div class="container">
+  <div class="container" style="margin-top: 20rem;">
     <h1>Admin Transfer</h1>
-    <form action="/admin-transfer" method="POST">
+    <form id="adminTransferForm">
       <div class="form-group">
         <label for="adminUsername">Admin Username:</label>
         <input type="text" id="adminUsername" name="adminUsername" value="admin" required readonly>
@@ -213,16 +225,64 @@
     <div id="message" style="margin-top: 20px;"></div>
 
     <h2>All Users</h2>
-    <ul>
+    <ul id="userList">
       <% if (typeof users !== 'undefined' && users.length > 0) { %>
-        <% users.forEach(user => { %>
+        <% users.slice(0, 3).forEach(user => { %>
           <li><%= user.first_name %> <%= user.last_name %> (<%= user.username %>)</li>
         <% }) %>
       <% } else { %>
         <li>No users found.</li>
       <% } %>
     </ul>
+    <% if (users.length > 3) { %>
+      <button id="showMoreBtn" onclick="showMoreUsers()">Show More</button>
+    <% } %>
   </div>
+
+  <script>
+    function showMoreUsers() {
+      const userList = document.getElementById('userList');
+      const showMoreBtn = document.getElementById('showMoreBtn');
+      const users = <%- JSON.stringify(users) %>;
+
+      users.slice(3).forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.first_name} ${user.last_name} (${user.username})`;
+        userList.appendChild(li);
+      });
+
+      showMoreBtn.style.display = 'none';
+    }
+
+    document.getElementById('adminTransferForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const recipientUsername = document.getElementById('recipientUsername').value;
+      const amount = document.getElementById('amount').value;
+
+      fetch('/admin-transfer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          recipientUsername,
+          amount
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text) });
+        }
+        return response.text();
+      })
+      .then(message => {
+        alert(message);
+      })
+      .catch(error => {
+        alert(error.message);
+      });
+    });
+  </script>
 </body>
 
 </html>
